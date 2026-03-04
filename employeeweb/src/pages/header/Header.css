@@ -1,0 +1,12 @@
+.navbar{
+    background-color: blue;
+}
+
+.navbar .navbar-brand{
+    color: white;
+}
+
+.navbar .nav-link{
+    color: #fff;
+    margin-right: 20px;
+}
