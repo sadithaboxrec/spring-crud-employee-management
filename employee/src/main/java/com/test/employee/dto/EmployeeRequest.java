@@ -3,9 +3,11 @@ package com.test.employee.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
 
 // EmployeeRequest.java
 @Getter
+@Setter   // for Junit testing
 public class EmployeeRequest {
 
     @NotBlank(message = "Name is required")
