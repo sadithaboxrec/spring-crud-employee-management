@@ -3,6 +3,10 @@ package com.test.employee.controller;
 import java.util.List;
 
 
+import com.test.employee.dto.EmployeeRequest;
+import com.test.employee.dto.EmployeeResponse;
+import com.test.employee.dto.EmployeeUpdateRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,53 +34,91 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+//    @PostMapping("/employee")
+//    public Employee postEmployee(@RequestBody Employee employee) {
+//        return employeeService.postEmployee(employee);
+//    }
+
     @PostMapping("/employee")
-    public Employee postEmployee(@RequestBody Employee employee) {
-        return employeeService.postEmployee(employee);
+    public ResponseEntity<EmployeeResponse> postEmployee(
+           @Valid @RequestBody EmployeeRequest request) {
+
+        EmployeeResponse response=employeeService.postEmployee(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
     }
+//
+//    @GetMapping("/employees")
+//    public  List<Employee> getAllEmployees(){
+//        return employeeService.getAllEmployees();
+//    }
 
     @GetMapping("/employees")
-    public  List<Employee> getAllEmployees(){
-        return employeeService.getAllEmployees();
-    } 
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+
+        List<EmployeeResponse> employees = employeeService.getAllEmployees();
+        return ResponseEntity.ok(employees);
+    }
+
+//    @DeleteMapping("/employee/{id}")
+//
+//    public ResponseEntity<?> deleteEmployee(@PathVariable Long id){
+//        try{
+//            employeeService.deleteEmployees(id);
+//            return new ResponseEntity<>("Employee with ID"+id+"deleted successfully",HttpStatus.OK);
+//        }catch(EntityNotFoundException e){
+//            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+//        }
+//    }
+
 
     @DeleteMapping("/employee/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
 
-    public ResponseEntity<?> deleteEmployee(@PathVariable Long id){
-        try{
-            employeeService.deleteEmployees(id);
-            return new ResponseEntity<>("Employee with ID"+id+"deleted successfully",HttpStatus.OK);
-        }catch(EntityNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.ok("Employee with ID " + id + " deleted successfully");
     }
 
+
+//    @GetMapping("/employee/{id}")
+//    public ResponseEntity<?> getEmployeeById(@PathVariable Long id){
+//
+//        Employee employee = employeeService.getEmployeeById(id);
+//
+//        if(employee == null) return ResponseEntity.notFound().build();
+//        return ResponseEntity.ok(employee);
+//    }
 
     @GetMapping("/employee/{id}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable Long id){
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
 
-        Employee employee = employeeService.getEmployeeById(id);
-
-        if(employee == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(employee);
+        EmployeeResponse response = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(response);
     }
 
-
-
+//    @PatchMapping("/employee/{id}")
+//public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
+//    Employee updatedEmployee = employeeService.updatedEmployee(id, employee);
+//
+//    if (updatedEmployee == null) {
+//        // Return a BAD_REQUEST response if employee not found
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                             .body("Employee with ID " + id + " not found.");
+//    }
+//
+//    // Return OK response with updated employee
+//    return ResponseEntity.ok(updatedEmployee);
+//}
 
     @PatchMapping("/employee/{id}")
-public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
-    Employee updatedEmployee = employeeService.updatedEmployee(id, employee);
+    public ResponseEntity<EmployeeResponse> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody EmployeeRequest request) {
 
-    if (updatedEmployee == null) {
-        // Return a BAD_REQUEST response if employee not found
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body("Employee with ID " + id + " not found.");
+        EmployeeResponse response = employeeService.updateEmployee(id, request);
+        return ResponseEntity.ok(response);
     }
-
-    // Return OK response with updated employee
-    return ResponseEntity.ok(updatedEmployee);
-}
 
 
 
