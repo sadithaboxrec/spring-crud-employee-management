@@ -120,4 +120,83 @@ class EmployeeServiceTest {
 //    Not the  ResourceNotFoundException.
 //           Need to  Change orElseThrow to throw ResourceNotFoundException .
 
+
+    // ==  Delete RECORDS ====
+
+    @Test
+    void shouldDeleteEmployeeSuccessfully() {
+        // Mock repo to say employee exists
+        when(employeeRepository.existsById(1L)).thenReturn(true);
+
+        // Call service
+        employeeService.deleteEmployee(1L);
+
+        // Verify repository delete is called once
+        verify(employeeRepository, times(1)).deleteById(1L);
+    }
+
+
+    @Test
+    void shouldThrowWhenDeletingNonExistingEmployee() {
+        // Mock repository to say employee does NOT exist
+        when(employeeRepository.existsById(1L)).thenReturn(false);
+
+        // Call service and assert exception
+        assertThrows(ResourceNotFoundException.class,
+                () -> employeeService.deleteEmployee(1L));
+    }
+
+
+
+          //     Update Records
+
+    @Test
+    void shouldUpdateEmployeeSuccessfully() {
+        // Only department  updated
+        EmployeeRequest request = new EmployeeRequest();
+        request.setDepartment("HR"); // other fields are null
+
+        // Existing employee in repository
+        Employee existing = new Employee();
+        existing.setId(1L);
+        existing.setName("Saditha");
+        existing.setEmail("saditha@gmail.com");
+        existing.setPhone("77 77 77 7777");
+        existing.setDepartment("IT");
+
+        // Mock repository
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Call service
+        EmployeeResponse response = employeeService.updateEmployee(1L, request);
+
+
+        assertEquals("HR", response.getDepartment()); // Updated field
+        assertNull(response.getName());
+        assertNull(response.getEmail());
+        assertNull(response.getPhone());
+
+    }
+
+    //  Current EmployeeRequest DTO requires all fields non-blank.
+   // As a result, partial PATCH updates  fail validation
+   // at the controller layer. Service does not update fields if they are null.
+
+
+    @Test
+    void shouldThrowWhenUpdatingNonExistingEmployee() {
+        EmployeeRequest request = new EmployeeRequest();
+        request.setName("Sas");
+        request.setEmail("sas@gmail.com");
+        request.setPhone("77 77 77 7777");
+        request.setDepartment("HR");
+
+        // Mock repository to throw exception
+        when(employeeRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> employeeService.updateEmployee(1L, request));
+    }
 }

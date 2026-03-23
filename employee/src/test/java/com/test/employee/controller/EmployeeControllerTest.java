@@ -203,7 +203,7 @@ class EmployeeControllerTest {
                 .andExpect(jsonPath("$.department").value("HR"));
     }
 
-    // ❌ PATCH test fails with 400 because EmployeeRequest has @NotBlank on name, email, phone
+    //  PATCH test fails with 400 because EmployeeRequest has @NotBlank on name, email, phone
 // Sending only 'department' triggers validation error for the other fields
 
 
