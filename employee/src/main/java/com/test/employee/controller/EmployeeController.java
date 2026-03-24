@@ -111,14 +111,24 @@ public class EmployeeController {
 //    return ResponseEntity.ok(updatedEmployee);
 //}
 
+//    @PatchMapping("/employee/{id}")
+//    public ResponseEntity<EmployeeResponse> updateEmployee(
+//            @PathVariable Long id,
+//            @Valid @RequestBody EmployeeRequest request) {
+//
+//        EmployeeResponse response = employeeService.updateEmployee(id, request);
+//        return ResponseEntity.ok(response);
+//    }
+
     @PatchMapping("/employee/{id}")
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
-            @Valid @RequestBody EmployeeRequest request) {
+            @RequestBody EmployeeUpdateRequest request) {
 
-        EmployeeResponse response = employeeService.updateEmployee(id, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(employeeService.updateEmployee(id, request));
     }
+
+
 
 
 

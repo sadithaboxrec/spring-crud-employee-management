@@ -89,8 +89,8 @@ public class EmployeeService {
 
     public EmployeeResponse getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee with ID " + id + " not found"));
-
+//                .orElseThrow(() -> new EntityNotFoundException("Employee with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee " + id + " not found"));   // fixing the test error
         return new EmployeeResponse(
                 employee.getId(), employee.getName(), employee.getEmail(), employee.getPhone(), employee.getDepartment()
         );
@@ -113,19 +113,58 @@ public class EmployeeService {
 //    }
 
 
-    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request) {
+//    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request) {
+//        Employee existing = employeeRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Employee " + id + " not found"));
+//
+//        existing.setName(request.getName());
+//        existing.setEmail(request.getEmail());
+//
+//        Employee updated = employeeRepository.save(existing);
+//
+//        return new EmployeeResponse(
+//                updated.getId(), updated.getName(), updated.getEmail(), updated.getPhone(), updated.getDepartment()
+//        );
+//    }
+
+
+
+    public EmployeeResponse updateEmployee(Long id, EmployeeUpdateRequest request) {
+
+        // 1. Fetch existing employee
         Employee existing = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee " + id + " not found"));
 
-        existing.setName(request.getName());
-        existing.setEmail(request.getEmail());
+        // 2. Update only non-null fields (PATCH )
+        if (request.getName() != null) {
+            existing.setName(request.getName());
+        }
 
+        if (request.getEmail() != null) {
+            existing.setEmail(request.getEmail());
+        }
+
+        if (request.getPhone() != null) {
+            existing.setPhone(request.getPhone());
+        }
+
+        if (request.getDepartment() != null) {
+            existing.setDepartment(request.getDepartment());
+        }
+
+        // 3. Save updated entity
         Employee updated = employeeRepository.save(existing);
 
+        // 4. Return response DTO
         return new EmployeeResponse(
-                updated.getId(), updated.getName(), updated.getEmail(), updated.getPhone(), updated.getDepartment()
+                updated.getId(),
+                updated.getName(),
+                updated.getEmail(),
+                updated.getPhone(),
+                updated.getDepartment()
         );
     }
+
 
 
 }

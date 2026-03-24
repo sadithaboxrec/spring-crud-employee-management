@@ -2,6 +2,7 @@ package com.test.employee.service;
 
 import com.test.employee.dto.EmployeeRequest;
 import com.test.employee.dto.EmployeeResponse;
+import com.test.employee.dto.EmployeeUpdateRequest;
 import com.test.employee.entity.Employee;
 import com.test.employee.exception.ResourceNotFoundException;
 import com.test.employee.repository.EmployeeRepository;
@@ -150,11 +151,51 @@ class EmployeeServiceTest {
 
           //     Update Records
 
+    // Wrong test case
+
+//    @Test
+//    void shouldUpdateEmployeeSuccessfully() {
+//        // Only department  updated
+//        EmployeeRequest request = new EmployeeRequest();
+//        request.setDepartment("HR"); // other fields are null
+//
+//        // Existing employee in repository
+//        Employee existing = new Employee();
+//        existing.setId(1L);
+//        existing.setName("Saditha");
+//        existing.setEmail("saditha@gmail.com");
+//        existing.setPhone("77 77 77 7777");
+//        existing.setDepartment("HR");
+//
+//        // Mock repository
+//        when(employeeRepository.findById(1L)).thenReturn(Optional.of(existing));
+//        when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+//
+//        // Call service
+//        EmployeeResponse response = employeeService.updateEmployee(1L, request);
+//
+//
+//        assertEquals("HR", response.getDepartment()); // Updated field
+
+
+//    logical errors here
+
+//        assertNull(response.getName());
+//        assertNull(response.getEmail());
+//        assertNull(response.getPhone());
+//
+//    }
+
+    //  Current EmployeeRequest DTO requires all fields non-blank.
+   // As a result, partial PATCH updates  fail validation
+   // at the controller layer. Service does not update fields if they are null.
+
+
     @Test
     void shouldUpdateEmployeeSuccessfully() {
         // Only department  updated
-        EmployeeRequest request = new EmployeeRequest();
-        request.setDepartment("HR"); // other fields are null
+        EmployeeUpdateRequest request = new EmployeeUpdateRequest();
+        request.setDepartment("IT"); // other fields are null
 
         // Existing employee in repository
         Employee existing = new Employee();
@@ -162,7 +203,7 @@ class EmployeeServiceTest {
         existing.setName("Saditha");
         existing.setEmail("saditha@gmail.com");
         existing.setPhone("77 77 77 7777");
-        existing.setDepartment("IT");
+        existing.setDepartment("HR");
 
         // Mock repository
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -172,21 +213,18 @@ class EmployeeServiceTest {
         EmployeeResponse response = employeeService.updateEmployee(1L, request);
 
 
-        assertEquals("HR", response.getDepartment()); // Updated field
-        assertNull(response.getName());
-        assertNull(response.getEmail());
-        assertNull(response.getPhone());
+        assertEquals("IT", response.getDepartment()); // Updated field
+        assertEquals("Saditha", response.getName());
+        assertEquals("saditha@gmail.com", response.getEmail());
+        assertEquals("77 77 77 7777", response.getPhone());
 
     }
 
-    //  Current EmployeeRequest DTO requires all fields non-blank.
-   // As a result, partial PATCH updates  fail validation
-   // at the controller layer. Service does not update fields if they are null.
 
 
     @Test
     void shouldThrowWhenUpdatingNonExistingEmployee() {
-        EmployeeRequest request = new EmployeeRequest();
+        EmployeeUpdateRequest request = new EmployeeUpdateRequest();
         request.setName("Sas");
         request.setEmail("sas@gmail.com");
         request.setPhone("77 77 77 7777");
@@ -199,4 +237,5 @@ class EmployeeServiceTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> employeeService.updateEmployee(1L, request));
     }
+
 }

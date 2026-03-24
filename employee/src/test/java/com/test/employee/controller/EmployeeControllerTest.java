@@ -3,6 +3,7 @@ package com.test.employee.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.employee.dto.EmployeeRequest;
 import com.test.employee.dto.EmployeeResponse;
+import com.test.employee.dto.EmployeeUpdateRequest;
 import com.test.employee.exception.ResourceNotFoundException;
 import com.test.employee.service.EmployeeService;
 import org.junit.jupiter.api.Test;
@@ -171,10 +172,47 @@ class EmployeeControllerTest {
 
     // Update employee tsets
 
+//    @Test
+//    void shouldUpdateEmployeeSuccessfully() throws Exception {
+//
+//        EmployeeRequest request = new EmployeeRequest();
+//        request.setDepartment("HR"); // only updating department
+//
+//
+//        //  existing employee response after update
+//        EmployeeResponse response = new EmployeeResponse(
+//                1L,
+//                "Saditha",                 // existing name
+//                "saditha@gmail.com",       // existing email
+//                "77 77 77 7777",               // existing phone
+//                "HR"                    // updated department
+//        );
+//
+//        //  Mock service to return updated employee
+//        when(employeeService.updateEmployee(eq(1L), any(EmployeeRequest.class)))
+//                .thenReturn(response);
+//
+//        //  PATCH request
+//        mockMvc.perform(patch("/api/employee/1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(new ObjectMapper().writeValueAsString(request)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id").value(1))
+//                .andExpect(jsonPath("$.name").value("Saditha"))
+//                .andExpect(jsonPath("$.email").value("saditha@gmail.com"))
+//                .andExpect(jsonPath("$.phone").value("77 77 77 7777"))
+//                .andExpect(jsonPath("$.department").value("HR"));
+//    }
+
+    //  PATCH test fails with 400 because EmployeeRequest has @NotBlank on name, email, phone
+// Sending only 'department' triggers validation error for the other fields
+
+
+
     @Test
     void shouldUpdateEmployeeSuccessfully() throws Exception {
 
-        EmployeeRequest request = new EmployeeRequest();
+        EmployeeUpdateRequest request = new EmployeeUpdateRequest();
         request.setDepartment("HR"); // only updating department
 
 
@@ -188,7 +226,7 @@ class EmployeeControllerTest {
         );
 
         //  Mock service to return updated employee
-        when(employeeService.updateEmployee(eq(1L), any(EmployeeRequest.class)))
+        when(employeeService.updateEmployee(eq(1L), any(EmployeeUpdateRequest.class)))
                 .thenReturn(response);
 
         //  PATCH request
@@ -203,21 +241,39 @@ class EmployeeControllerTest {
                 .andExpect(jsonPath("$.department").value("HR"));
     }
 
-    //  PATCH test fails with 400 because EmployeeRequest has @NotBlank on name, email, phone
-// Sending only 'department' triggers validation error for the other fields
 
+//    @Test
+//    void shouldReturnNotFoundWhenUpdatingNonExistingEmployee() throws Exception {
+//        // Prepare request
+//        EmployeeRequest request = new EmployeeRequest();
+//        request.setName("Sas");
+//        request.setEmail("sas@gmail.com");
+//        request.setPhone("77 77 77 7777");
+//        request.setDepartment("HR");
+//
+//        // Mock service to throw exception
+//        when(employeeService.updateEmployee(eq(1L), any(EmployeeRequest.class)))
+//                .thenThrow(new ResourceNotFoundException("Employee 1 not found"));
+//
+//        // Perform PATCH request
+//        mockMvc.perform(patch("/api/employee/1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isNotFound())
+//                .andExpect(content().string("Employee 1 not found"));
+//    }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistingEmployee() throws Exception {
         // Prepare request
-        EmployeeRequest request = new EmployeeRequest();
+        EmployeeUpdateRequest request = new EmployeeUpdateRequest();
         request.setName("Sas");
         request.setEmail("sas@gmail.com");
         request.setPhone("77 77 77 7777");
         request.setDepartment("HR");
 
         // Mock service to throw exception
-        when(employeeService.updateEmployee(eq(1L), any(EmployeeRequest.class)))
+        when(employeeService.updateEmployee(eq(1L), any(EmployeeUpdateRequest.class)))
                 .thenThrow(new ResourceNotFoundException("Employee 1 not found"));
 
         // Perform PATCH request
