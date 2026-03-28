@@ -9,6 +9,7 @@ import com.test.employee.dto.EmployeeUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ public class EmployeeController {
 //    }
 
     @PostMapping("/employee")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<EmployeeResponse> postEmployee(
            @Valid @RequestBody EmployeeRequest request) {
 
@@ -55,6 +57,7 @@ public class EmployeeController {
 //    }
 
     @GetMapping("/employees")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
 
         List<EmployeeResponse> employees = employeeService.getAllEmployees();
@@ -74,6 +77,7 @@ public class EmployeeController {
 
 
     @DeleteMapping("/employee/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
 
         employeeService.deleteEmployee(id);
@@ -91,6 +95,7 @@ public class EmployeeController {
 //    }
 
     @GetMapping("/employee/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
 
         EmployeeResponse response = employeeService.getEmployeeById(id);
@@ -121,6 +126,7 @@ public class EmployeeController {
 //    }
 
     @PatchMapping("/employee/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
             @RequestBody EmployeeUpdateRequest request) {
