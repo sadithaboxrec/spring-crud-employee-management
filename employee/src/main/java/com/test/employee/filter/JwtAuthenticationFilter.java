@@ -80,13 +80,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             }
 
-            filterChain.doFilter(request, response);
 
 
-            System.out.println("Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-            System.out.println("Principal: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
+
         }
 
+        filterChain.doFilter(request, response);
+
+        System.out.println("Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        System.out.println("Principal: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         // Do the validation
 

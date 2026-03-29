@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -50,11 +51,19 @@ public class JwtService {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
+        // Get the role from authorities
+        String role = userPrincipal.getAuthorities()
+                .stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("");
+
         return Jwts.builder()
                 .header()
                 .add("typ","JWT")
                 .and()
                 .subject(userPrincipal.getUsername())
+                .claim("role", role)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSignInKey())
@@ -79,11 +88,20 @@ public class JwtService {
         Map<String, String> claims = new HashMap<>();
         claims.put("tokenType","refresh");
 
+
+        // Get the role from authorities
+        String role = userPrincipal.getAuthorities()
+                .stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("");
+
         return Jwts.builder()
                 .header()
                 .add("typ","JWT")
                 .and()
                 .subject(userPrincipal.getUsername())
+                .claim("role", role)
                 .claims(claims)
                 .issuedAt(now)
                 .expiration(expiryDate)
