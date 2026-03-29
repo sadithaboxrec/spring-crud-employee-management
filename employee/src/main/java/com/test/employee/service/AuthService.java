@@ -5,6 +5,7 @@ import com.test.employee.dto.RefreshTokenRequest;
 import com.test.employee.dto.RegisterRequest;
 import com.test.employee.dto.TokenPair;
 import com.test.employee.entity.User;
+import com.test.employee.enums.Role;
 import com.test.employee.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -44,12 +45,16 @@ public class AuthService {
             throw new IllegalArgumentException("Username is already in use");
         }
 
+        // Default to ROLE_MANAGER if no role provided
+        Role role = registerRequest.getRole() != null ? registerRequest.getRole() : Role.ROLE_MANAGER;
+
         User user = User
                 .builder()
                 .fullName(registerRequest.getFullName())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
+//                .role(registerRequest.getRole())
+                .role(role)
                 .build();
 
         userRepository.save(user);
