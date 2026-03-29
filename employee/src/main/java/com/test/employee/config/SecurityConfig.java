@@ -1,5 +1,6 @@
 package com.test.employee.config;
 
+import com.test.employee.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +28,8 @@ public class SecurityConfig {
 
     // after register controller and service
     private final UserDetailsService userDetailsService;
+    // after jwtauthenticationFilter
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,9 +57,18 @@ public class SecurityConfig {
         http
                 .csrf(csrf->csrf.disable())   // Rest Apis typically don't need CSRF protection with jwt
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-                ).authenticationProvider(authenticationProvider());
+
+                )
+                // after jwtauthenticationfilter
+                .sessionManagement(session ->session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // existed before jwtauthenticationfilter
+                .authenticationProvider(authenticationProvider());
 
 
         return http.build();

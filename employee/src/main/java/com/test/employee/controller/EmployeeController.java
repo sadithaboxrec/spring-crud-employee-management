@@ -41,7 +41,7 @@ public class EmployeeController {
 //    }
 
     @PostMapping("/employee")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeResponse> postEmployee(
            @Valid @RequestBody EmployeeRequest request) {
 
@@ -57,7 +57,7 @@ public class EmployeeController {
 //    }
 
     @GetMapping("/employees")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
 
         List<EmployeeResponse> employees = employeeService.getAllEmployees();
@@ -77,7 +77,7 @@ public class EmployeeController {
 
 
     @DeleteMapping("/employee/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
 
         employeeService.deleteEmployee(id);
@@ -95,7 +95,7 @@ public class EmployeeController {
 //    }
 
     @GetMapping("/employee/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
 
         EmployeeResponse response = employeeService.getEmployeeById(id);
@@ -126,7 +126,7 @@ public class EmployeeController {
 //    }
 
     @PatchMapping("/employee/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
             @RequestBody EmployeeUpdateRequest request) {
