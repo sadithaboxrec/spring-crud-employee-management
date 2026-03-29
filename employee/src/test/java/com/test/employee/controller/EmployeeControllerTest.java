@@ -1,26 +1,33 @@
 package com.test.employee.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.config.TestSecurityConfig;
 import com.test.employee.dto.EmployeeRequest;
 import com.test.employee.dto.EmployeeResponse;
 import com.test.employee.dto.EmployeeUpdateRequest;
 import com.test.employee.exception.ResourceNotFoundException;
 import com.test.employee.service.EmployeeService;
+import com.test.employee.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
+@Import({TestSecurityConfig.class})
 class EmployeeControllerTest {
 
     @Autowired
@@ -32,8 +39,15 @@ class EmployeeControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldCreateEmployeeSuccessfully() throws Exception {
 
         // eexpected responses from service
@@ -61,6 +75,7 @@ class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldFailValidationWhenCreatingEmployee() throws Exception {
 
         EmployeeRequest request = new EmployeeRequest();
@@ -84,6 +99,7 @@ class EmployeeControllerTest {
     // Get all employees
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldReturnAllEmployees() throws Exception {
 
         //   mock service response
@@ -106,6 +122,7 @@ class EmployeeControllerTest {
 // Employyes return by Id
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldReturnEmployeeByIdSuccessfully() throws Exception {
 
         // Prepare mock service response
@@ -125,6 +142,7 @@ class EmployeeControllerTest {
 
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldReturnNotFoundWhenEmployeeDoesNotExist() throws Exception {
 
         // Mock service to throw exception
@@ -139,6 +157,7 @@ class EmployeeControllerTest {
     // Delete TESTS
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldDeleteEmployeeSuccessfully() throws Exception {
 
         //  Mock service behavior
@@ -154,6 +173,7 @@ class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldReturnNotFoundWhenDeletingNonExistingEmployee() throws Exception {
 
         //  Mock service to throw exception
@@ -210,6 +230,7 @@ class EmployeeControllerTest {
 
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldUpdateEmployeeSuccessfully() throws Exception {
 
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -231,6 +252,7 @@ class EmployeeControllerTest {
 
         //  PATCH request
         mockMvc.perform(patch("/api/employee/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -264,6 +286,7 @@ class EmployeeControllerTest {
 //    }
 
     @Test
+    @WithMockUser(username = "saditha", roles = {"ADMIN"})
     void shouldReturnNotFoundWhenUpdatingNonExistingEmployee() throws Exception {
         // Prepare request
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
