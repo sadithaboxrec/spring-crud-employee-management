@@ -126,7 +126,7 @@ public class EmployeeController {
 //    }
 
     @PatchMapping("/employee/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
             @RequestBody EmployeeUpdateRequest request) {

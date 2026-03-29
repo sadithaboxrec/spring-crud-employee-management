@@ -33,6 +33,7 @@ public class EmployeeService {
         employee.setName(employeeRequest.getName());
         employee.setEmail(employeeRequest.getEmail());
         employee.setPhone(employeeRequest.getPhone());
+        employee.setDepartment(employeeRequest.getDepartment());
 
         Employee saved= employeeRepository.save(employee);
 
