@@ -22,7 +22,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true , name = "full_name")
+    @Column( name = "full_name")
     private String fullName;
 
     @Column(unique = true , nullable = false)
@@ -34,10 +34,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public User(String username, String password, Role role, String fullName) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.fullName = fullName;
-    }
 }
